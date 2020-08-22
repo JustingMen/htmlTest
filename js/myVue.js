@@ -8,6 +8,9 @@ class Compiler {
 
     // 编译 虚拟 DOM 碎片中的 自定义的 v- 指令
     this.compiler( fragment );
+
+    //将 编译好的 虚拟 DOM 挂在到 DOM元素
+    this.el.appendChild( fragment );
     
   }
 
@@ -47,6 +50,77 @@ class Compiler {
     })
   }
 
+  compilerAttr( node, vm ) {
+
+    // 自定义指令的前缀 ‘v-’
+    let vBefore = 'v-';
+
+    // 获取 元素的所有属性
+    let attributes = node.attributes;
+
+    // 遍历所有 元素属性 并调用相应的方法
+    [ ...attributes ].forEach( attr => {
+
+      let { name, value } = attr;
+      
+      if( name.includes( vBefore ) ) {
+
+        let [ , dirText ] = String.prototype.split.call( name, '-' );
+        let [ dirName, eventName] = String.prototype.split.call( dirText, ':' );
+
+        compilerUtil[dirName]( node, value, vm, eventName );
+      }
+    })
+  }
+
+  compilerText( child, vm ) {
+
+    let content = child.textContent;
+    let mus = /\{\{(.+?)\}\}/;
+
+    if( mus.test( content )) {
+      compilerUtil['text']( child, content, vm );
+    }
+  }
+
+}
+
+let compilerUtil = {
+  getVal: function( expr, vm ) {
+
+    let rMus = /\{\{(.+?)\}\}/g;
+    let value = null;
+
+    if( expr.includes( '{{' ) ) {
+      
+      value = expr.replace( rMus, ( ...attr ) => {
+        return attr[1].split('.').reduce( ( data, currentVal ) => {
+          return data[ currentVal.trim() ];
+        }, vm.$data );
+      });
+    } else {
+      value = expr.split('.').reduce( ( data, currentVal ) => {
+        return data[ currentVal ];
+      }, vm.$data );
+    }
+
+    return value;
+  },
+  text: function( node, expr, vm ) {
+    let value = this.getVal( expr, vm );
+    node.textContent = value;
+  },
+  html: function( node, expr, vm ) {
+    let value = this.getVal( expr, vm );
+    node.innerHTML = value;
+  },
+  model: function( node, expr, vm ) {
+    let value = this.getVal( expr, vm );
+    node.value = value;
+  },
+  on: function( node, expr, vm ) {
+    
+  }
 }
 
 class myVue {
