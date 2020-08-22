@@ -39,9 +39,14 @@ class Compiler {
         //如果是 文本节点  则调用相应的处理函数
         this.compilerText( child, this.vm );
       }
+
+      // 如果 子元素中还存在子元素，则递归调用 compiler 方法
+      if( child.childNodes && child.childNodes.length ) {
+        this.compiler( child );
+      }
     })
   }
-  
+
 }
 
 class myVue {
