@@ -5,7 +5,10 @@ class Compiler {
 
     // 将模板 DOM 保存在 虚拟 DOM 碎片中
     let fragment = this.node2Fragment( this.el );
-    console.log( fragment );
+
+    // 编译 虚拟 DOM 碎片中的 自定义的 v- 指令
+    this.compiler( fragment );
+    
   }
 
   node2Fragment ( node ) {
@@ -21,6 +24,24 @@ class Compiler {
 
     return fragment;
   }
+
+  compiler( node ) {
+    //获取 虚拟 DOM 碎片中的所有 子节点
+    let childNodes = node.childNodes;
+
+    [ ...childNodes ].forEach( child => {
+      
+      //如果是 元素节点
+      if( child.nodeType === 1 ) {
+        //调用相应的处理函数
+        this.compilerAttr( child, this.vm );
+      } else {
+        //如果是 文本节点  则调用相应的处理函数
+        this.compilerText( child, this.vm );
+      }
+    })
+  }
+  
 }
 
 class myVue {
