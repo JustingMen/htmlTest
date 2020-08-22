@@ -14,8 +14,8 @@
     <ul>
       <li>1</li>
       <li>2</li>
-      <li>3</li>
-      <li>4</li>
+      <li v-text="person.fav.favBall">3</li>
+      <li v-text="person.name">4</li>
     </ul>
     <input type="text" v-model="message" />
     <button v-on:click="getName">click</button>
