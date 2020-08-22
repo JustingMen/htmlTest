@@ -7,7 +7,20 @@
 </head>
 <body>
   <div id="app">
-    
+    <div>
+      <p v-text="message"></p>
+      <p>{{ message }}</p>
+      <p>{{ person.name }} --- {{ person.age }}</p>
+      <p v-html="htmlStr"></p>
+      <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+      </ul>
+      <input type="text" v-model="message" />
+      <button v-on:click="getName">click</button>
+    </div>
   </div>
 </body>
 <script src="js/myVue.js"></script>
@@ -24,6 +37,12 @@
       },
       message: '正在自学vue',
       htmlStr: '<i>这是i标签</i>'
+    },
+    methods: {
+      getName() {
+        this.data.name = 'wanglu';
+        console.log( this );
+      }
     }
   })
 </script>
